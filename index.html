@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Redimensionnement et conversion webp</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+    #imageInput {
+      margin-bottom: 20px;
+    }
+    #resultContainer{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>Redimensionnement et conversion en webp</h1>
+  <input type="file" id="imageInput" multiple>
+  <label for="resizeValue">Valeur de redimensionnement (en pixels):</label>
+  <input type="number" id="resizeValue" min="1" step="100" value="1000">
+  <div>
+    <input type="radio" id="resizeHeight" name="resizeOption" value="height" checked>
+    <label for="resizeHeight">Hauteur maximale</label>
+  </div>
+  <div>
+    <input type="radio" id="resizeWidth" name="resizeOption" value="width">
+    <label for="resizeWidth">Largeur maximale</label>
+  </div>
+  <button id="resizeButton">Redimensionner et convertir</button>
+  <div id="resultContainer"></div>
+  <script>
+    document.getElementById('resizeButton').addEventListener('click', function() {
+      let input = document.getElementById('imageInput');
+      let files = input.files;
+      let resultContainer = document.getElementById('resultContainer');
+      let resizeOption = document.querySelector('input[name="resizeOption"]:checked').value;
+      let resizeValue = document.getElementById('resizeValue').value;
+      resultContainer.innerHTML = '';
+      
+      for (let i = 0; i < files.length; i++) {
+        let file = files[i];
+        let reader = new FileReader();
+        
+        reader.onload = function(e) {
+          let img = new Image();
+          
+          img.onload = function() {
+            let canvas = document.createElement('canvas');
+            let ctx = canvas.getContext('2d');
+            let resizeWidth, resizeHeight;
+            
+            if (resizeOption === 'height') {
+              resizeHeight = resizeValue;
+              resizeWidth = Math.round((img.width / img.height) * resizeValue);
+            } else {
+              resizeWidth = resizeValue;
+              resizeHeight = Math.round((img.height / img.width) * resizeValue);
+            }
+            
+            canvas.width = resizeWidth;
+            canvas.height = resizeHeight;
+            
+            ctx.drawImage(img, 0, 0, resizeWidth, resizeHeight);
+            
+            canvas.toBlob(function(blob) {
+              let downloadLink = document.createElement('a');
+              downloadLink.href = URL.createObjectURL(blob);
+              downloadLink.download = file.name.replace(/\.[^/.]+$/, "") + ".webp";
+              downloadLink.innerText = "Télécharger l'image";
+              
+              let resultImg = document.createElement('img');
+              resultImg.src = URL.createObjectURL(blob);
+              
+              resultContainer.appendChild(downloadLink);
+              resultContainer.appendChild(resultImg);
+            }, 'image/webp');
+          };
+          
+          img.src = e.target.result;
+        };
+        
+        reader.readAsDataURL(file);
+      }
+    });
+  </script>
+</body>
+</html>
