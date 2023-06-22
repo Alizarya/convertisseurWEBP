@@ -2,28 +2,103 @@
 <html>
 <head>
   <title>Redimensionnement et conversion webp</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Oswald&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/aa10eb2a87.js" crossorigin="anonymous"></script>
+  
   <style>
+    :root {
+      /* Variables des couleurs */
+      --violet-fonce: #551860;
+      --violet-clair: #e4cae9;
+      --bleu-fonce: #244a68;
+      --bleu-clair: #d8eaee;
+      --jaune: #ffce2f;
+      --beige: #fbe6e4;
+
+      /* Variables des polices */
+      --oswald: 'Oswald', sans-serif;
+      --roboto: 'Roboto', sans-serif;
+    }
+
     body {
       display: flex;
       flex-direction: column;
       align-items: center;
       margin-top: 50px;
+      background-color: var(--bleu-fonce);
+      font-family: var(--roboto);
+      color : var(--bleu-clair)
     }
-    #imageInput {
-      margin-bottom: 20px;
+
+    h1 {
+      font-family: var(--oswald);
+      text-transform: uppercase;
+      color: var(--jaune);
     }
-    #resultContainer{
+
+    
+    .valeur{
+      font-family: var(--oswald);
+      color: var(--jaune);
+      font-size: 24px;
+      margin-top: 2em;
+      margin-bottom: 0.5em;
+    }
+
+    #resizeHeight, #resizeWidth {
+      margin: 0.5em;
+    }
+
+    #resizeButton, #resultContainer button{
+      margin: 1em;
+      cursor: pointer;
+      background-color: var(--bleu-clair);
+      padding: 0.5em;
+      color: var(--bleu-fonce);
+      font-family: var(--oswald);
+      text-transform: uppercase;
+      font-weight: bolder;
+      font-size: 18px;
+    }
+
+    #resizeButton:hover, #resultContainer button:hover{
+      background-color: var(--jaune);
+    }
+
+    #resultContainer {
       display: flex;
-      flex-direction: column;
-      justify-content: center;
+      flex-wrap: wrap;
+      margin: auto;
+      justify-content: space-around;
     }
+
+    #resultContainer > *:first-child {
+      flex-basis: 20%;
+      flex-grow: 0;
+      flex-shrink: 0;
+      margin-right: 40%;
+      margin-left: 40%;
+    }
+
+    #resultContainer > *:not(:first-child) {
+      display: flex;
+      height: fit-content;
+      max-width: 150px;
+    }
+
+
+
   </style>
 </head>
+
+
 <body>
   <h1>Redimensionnement et conversion en webp</h1>
-  <input type="file" id="imageInput" multiple>
-  <label for="resizeValue">Valeur de redimensionnement (en pixels):</label>
-  <input type="number" id="resizeValue" min="1" step="100" value="1000">
+    <input type="file" id="imageInput" multiple>
+    <label class="valeur" for="resizeValue">Valeur de redimensionnement (en pixels):</label>
+    <input type="number" id="resizeValue" min="1" step="100" value="1000">
   <div>
     <input type="radio" id="resizeHeight" name="resizeOption" value="height" checked>
     <label for="resizeHeight">Hauteur maximale</label>
@@ -33,7 +108,13 @@
     <label for="resizeWidth">Largeur maximale</label>
   </div>
   <button id="resizeButton">Redimensionner et convertir</button>
-  <div id="resultContainer"></div>
+  <div id="resultContainer">
+    <div id="downloadBtn"></div>
+    <div id="resizedPics"></div>
+  </div>
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
   <script>
     document.getElementById('resizeButton').addEventListener('click', function() {
       let input = document.getElementById('imageInput');
@@ -43,51 +124,62 @@
       let resizeValue = document.getElementById('resizeValue').value;
       resultContainer.innerHTML = '';
       
+      let downloadButton = document.createElement('button');
+      downloadButton.innerText = "Télécharger tout";
+      downloadButton.addEventListener('click', function() {
+        for (let i = 0; i < files.length; i++) {
+          let file = files[i];
+          let reader = new FileReader();
+          
+          reader.onload = function(e) {
+            let img = new Image();
+            
+            img.onload = function() {
+              let canvas = document.createElement('canvas');
+              let ctx = canvas.getContext('2d');
+              let resizeWidth, resizeHeight;
+              
+              if (resizeOption === 'height') {
+                resizeHeight = resizeValue;
+                resizeWidth = Math.round((img.width / img.height) * resizeValue);
+              } else {
+                resizeWidth = resizeValue;
+                resizeHeight = Math.round((img.height / img.width) * resizeValue);
+              }
+              
+              canvas.width = resizeWidth;
+              canvas.height = resizeHeight;
+              
+              ctx.drawImage(img, 0, 0, resizeWidth, resizeHeight);
+              
+              canvas.toBlob(function(blob) {
+                saveAs(blob, file.name.replace(/\.[^/.]+$/, "") + ".webp");
+              }, 'image/webp');
+            };
+            
+            img.src = e.target.result;
+          };
+          
+          reader.readAsDataURL(file);
+        }
+      });
+      
+      resultContainer.appendChild(downloadButton);
+      
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
         let reader = new FileReader();
         
         reader.onload = function(e) {
-          let img = new Image();
-          
-          img.onload = function() {
-            let canvas = document.createElement('canvas');
-            let ctx = canvas.getContext('2d');
-            let resizeWidth, resizeHeight;
-            
-            if (resizeOption === 'height') {
-              resizeHeight = resizeValue;
-              resizeWidth = Math.round((img.width / img.height) * resizeValue);
-            } else {
-              resizeWidth = resizeValue;
-              resizeHeight = Math.round((img.height / img.width) * resizeValue);
-            }
-            
-            canvas.width = resizeWidth;
-            canvas.height = resizeHeight;
-            
-            ctx.drawImage(img, 0, 0, resizeWidth, resizeHeight);
-            
-            canvas.toBlob(function(blob) {
-              let downloadLink = document.createElement('a');
-              downloadLink.href = URL.createObjectURL(blob);
-              downloadLink.download = file.name.replace(/\.[^/.]+$/, "") + ".webp";
-              downloadLink.innerText = "Télécharger l'image";
-              
-              let resultImg = document.createElement('img');
-              resultImg.src = URL.createObjectURL(blob);
-              
-              resultContainer.appendChild(downloadLink);
-              resultContainer.appendChild(resultImg);
-            }, 'image/webp');
-          };
-          
+          let img = document.createElement('img');
           img.src = e.target.result;
+          resultContainer.appendChild(img);
         };
         
         reader.readAsDataURL(file);
       }
     });
   </script>
+  
 </body>
 </html>
