@@ -36,9 +36,9 @@
       font-family: var(--oswald);
       text-transform: uppercase;
       color: var(--jaune);
+      text-align: center;
     }
 
-    
     .valeur{
       font-family: var(--oswald);
       color: var(--jaune);
@@ -89,8 +89,6 @@
       margin: 0.5em;
     }
 
-
-
   </style>
 </head>
 
@@ -116,8 +114,11 @@
 
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+  
   <script>
     document.getElementById('resizeButton').addEventListener('click', function() {
+
+      // Récupérer les infos 
       let input = document.getElementById('imageInput');
       let files = input.files;
       let resultContainer = document.getElementById('resultContainer');
@@ -125,9 +126,12 @@
       let resizeValue = document.getElementById('resizeValue').value;
       resultContainer.innerHTML = '';
       
+      // Créer le bouton de téléchargement
       let downloadButton = document.createElement('button');
       downloadButton.innerText = "Télécharger tout";
       downloadButton.addEventListener('click', function() {
+
+        // Parcourir les fichiers sélectionnés
         for (let i = 0; i < files.length; i++) {
           let file = files[i];
           let reader = new FileReader();
@@ -136,10 +140,12 @@
             let img = new Image();
             
             img.onload = function() {
+              // Créer un canvas pour le redimensionnement
               let canvas = document.createElement('canvas');
               let ctx = canvas.getContext('2d');
               let resizeWidth, resizeHeight;
               
+              // Déterminer les dimensions de redimensionnement en fonction de l'option choisie
               if (resizeOption === 'height') {
                 resizeHeight = resizeValue;
                 resizeWidth = Math.round((img.width / img.height) * resizeValue);
@@ -148,25 +154,32 @@
                 resizeHeight = Math.round((img.height / img.width) * resizeValue);
               }
               
+              // Définir les dimensions du canvas
               canvas.width = resizeWidth;
               canvas.height = resizeHeight;
               
+              // Dessiner l'image redimensionnée sur le canvas
               ctx.drawImage(img, 0, 0, resizeWidth, resizeHeight);
               
+              // Convertir le canvas en format webp et télécharger le fichier
               canvas.toBlob(function(blob) {
                 saveAs(blob, file.name.replace(/\.[^/.]+$/, "") + ".webp");
               }, 'image/webp');
             };
             
+            // Charger l'image source
             img.src = e.target.result;
           };
           
+          // Lire le contenu du fichier en tant que Data URL
           reader.readAsDataURL(file);
         }
       });
       
+      // Ajouter le bouton de téléchargement au conteneur 
       resultContainer.appendChild(downloadButton);
       
+      // Afficher les images redimensionnées dans le conteneur
       for (let i = 0; i < files.length; i++) {
         let file = files[i];
         let reader = new FileReader();
@@ -177,10 +190,12 @@
           resultContainer.appendChild(img);
         };
         
+        // Lire le contenu du fichier en tant que Data URL
         reader.readAsDataURL(file);
       }
     });
   </script>
+  
   
 </body>
 </html>
