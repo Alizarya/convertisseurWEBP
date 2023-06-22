@@ -26,10 +26,25 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      margin-top: 50px;
       background-color: var(--bleu-fonce);
       font-family: var(--roboto);
       color : var(--bleu-clair)
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
+
+    header img {
+      margin-top: 50px;
+      width: 40px;
+    }
+
+    main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
     }
 
     h1 {
@@ -94,27 +109,37 @@
 
 
 <body>
-  <h1>Redimensionnement et conversion en webp</h1>
-    <input type="file" id="imageInput" multiple>
-    <label class="valeur" for="resizeValue">Valeur de redimensionnement (en pixels):</label>
-    <input type="number" id="resizeValue" min="1" step="100" value="1000">
-  <div>
-    <input type="radio" id="resizeHeight" name="resizeOption" value="height" checked>
-    <label for="resizeHeight">Hauteur maximale</label>
-  </div>
-  <div>
-    <input type="radio" id="resizeWidth" name="resizeOption" value="width">
-    <label for="resizeWidth">Largeur maximale</label>
-  </div>
-  <button id="resizeButton">Redimensionner et convertir</button>
-  <div id="resultContainer">
-    <div id="downloadBtn"></div>
-    <div id="resizedPics"></div>
-  </div>
+  <header>
+    <img src="https://raw.githubusercontent.com/Alizarya/Alizaryana/main/Frontend/assets/images/logos/logo-bleu.png" alt="logo Alizaryana">
+    <p>Une application par AlizaryAna</p>
+  </header>
 
+  <main>
+    <h1>Redimensionnement et conversion en webp</h1>
+      <input type="file" id="imageInput" multiple>
+      <label class="valeur" for="resizeValue">Valeur de redimensionnement (en pixels):</label>
+      <input type="number" id="resizeValue" min="1" step="100" value="1000">
+    <div>
+      <input type="radio" id="resizeHeight" name="resizeOption" value="height" checked>
+      <label for="resizeHeight">Hauteur maximale</label>
+    </div>
+    <div>
+      <input type="radio" id="resizeWidth" name="resizeOption" value="width">
+      <label for="resizeWidth">Largeur maximale</label>
+    </div>
+    <button id="resizeButton">Redimensionner et convertir</button>
+    <div id="resultContainer">
+      <div id="downloadBtn"></div>
+      <div id="resizedPics"></div>
+    </div>
+  </main>
+
+  <footer>
+
+  </footer>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-  
+
   <script>
     document.getElementById('resizeButton').addEventListener('click', function() {
 
