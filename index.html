@@ -22,7 +22,7 @@
       --roboto: 'Roboto', sans-serif;
     }
 
-    body {
+    body, a{
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -30,6 +30,16 @@
       font-family: var(--roboto);
       color : var(--bleu-clair)
     }
+
+    a {
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: var(--jaune);
+    }
+
+
     
     header {
       text-align: center;
@@ -109,9 +119,12 @@
 
 
 <body>
+
   <header>
-    <img src="https://raw.githubusercontent.com/Alizarya/Alizaryana/main/Frontend/assets/images/logos/logo-bleu.png" alt="logo Alizaryana">
-    <p>Une application par AlizaryAna</p>
+    <a href="https://twitter.com/Alizaryanar">
+      <img src="https://raw.githubusercontent.com/Alizarya/Alizaryana/main/Frontend/assets/images/logos/logo-bleu.png" alt="logo Alizaryana">
+      <p>Une application par AlizaryAna</p>
+  </a>
   </header>
 
   <main>
